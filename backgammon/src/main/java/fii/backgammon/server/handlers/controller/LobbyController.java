@@ -49,4 +49,17 @@ public class LobbyController {
         LobbyDAO.addUser(lobby,user2);
         return new ResponseEntity<>("User joined a lobby",HttpStatus.OK);
     }
+
+    @DeleteMapping("/{username}")
+    public ResponseEntity<String> deleteLobby(@PathVariable("username") String username) {
+        Lobby lobby = lobbies.stream().filter(l -> l.getUser1().getUsername().equals(username)).findFirst().orElse(null);
+        if(lobby == null) {
+            return new ResponseEntity<>("Lobby not found",HttpStatus.NOT_FOUND);
+        }
+
+        lobbies.remove(lobby);
+        LobbyDAO.deleteLobby(lobby);
+        LobbyDAO.commit();
+        return new ResponseEntity<>("Lobby deleted successfully",HttpStatus.OK);
+    }
 }
