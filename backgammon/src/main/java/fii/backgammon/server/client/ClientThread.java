@@ -1,8 +1,7 @@
 package fii.backgammon.server.client;
 
-import fii.backgammon.server.client.commands.Command;
-import fii.backgammon.server.client.commands.GetUserInfo;
-import fii.backgammon.server.client.commands.RegisterCommand;
+import fii.backgammon.server.client.commands.*;
+import fii.backgammon.server.handlers.entity.User;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -72,6 +71,36 @@ public class ClientThread extends Thread{
                 String response = comm.run();
                 System.out.println("Response: " + response);
                 System.out.println("User: " + arg);
+                return response;
+            }
+
+            case "lobby.create": {
+                String[] userData = arg.replace("[","").replace("]","").split(",");
+                User user = new User(userData[0],userData[1]);
+                comm = new CreateLobby(user);
+                String response = comm.run();
+                System.out.println("Response: " + response);
+                System.out.println("Arg: " + arg);
+                return response;
+            }
+
+            case "lobby.refresh": {
+                comm = new RefreshLobby(arg);
+                String response = comm.run();
+                System.out.println("Response: " + response);
+                System.out.println("Arg: "+ arg);
+                return response;
+
+            }
+
+            case "lobby.join": {
+                String[] data = arg.replace("[","").replace("]","").split(",");
+                String username = data[0];
+                User user2 = new User(data[1],data[2]);
+                comm = new JoinLobby(username,user2);
+                String response = comm.run();
+                System.out.println("Response: " + response);
+                System.out.println("Arg: " + arg);
                 return response;
             }
 

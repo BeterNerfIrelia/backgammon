@@ -20,7 +20,7 @@ public class LobbyMenu {
             newlines();
             System.out.println(message);
 
-            System.out.println("\n\n\n");
+            System.out.println("\n\nPlease insert the corresponding number to your option:");
             String command = LobbyMenu.read();
 
             switch (command) {
@@ -37,7 +37,7 @@ public class LobbyMenu {
                 }
 
                 case "3": {
-                    System.out.println("\n\n\nGoodbye!");
+                    System.out.println("\nGoodbye!");
                     Messages.send(socket,null);
                     return;
                 }

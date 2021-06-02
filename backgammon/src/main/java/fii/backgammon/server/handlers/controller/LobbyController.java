@@ -29,13 +29,26 @@ public class LobbyController {
         return lobbies;
     }
 
-    @PostMapping(value="/username", consumes = "application/json")
+    @GetMapping("/{id}")
+    public Lobby getLobby(@PathVariable("id") String id) {
+        Lobby lobby = lobbies.stream().filter(l -> l.getUser1().getId().equals(id)).findFirst().orElse(null);
+        return lobby;
+    }
+
+    @PostMapping(value="/create", consumes = "application/json")
     public ResponseEntity<String> createLobby(@RequestBody User user) {
         Lobby lobby = new Lobby(user);
         lobbies.add(lobby);
         LobbyDAO.insertLobby(lobby);
         LobbyDAO.commit();
-        return new ResponseEntity<>("201", HttpStatus.CREATED);
+        StringBuilder response = new StringBuilder("[").
+                                     append(lobby.getUser1().getId()).
+                                     append(",").
+                                     append(lobby.getUser1().getUsername()).
+                                     append(",").
+                                     append(lobby.getCode()).
+                                     append("]");
+        return new ResponseEntity<>(response.toString(), HttpStatus.CREATED);
     }
 
     @PutMapping("/{username}")
@@ -47,7 +60,18 @@ public class LobbyController {
 
         lobby.setUser2(user2);
         LobbyDAO.addUser(lobby,user2);
-        return new ResponseEntity<>("200-PUT",HttpStatus.OK);
+        StringBuilder response = new StringBuilder("[")
+                .append(lobby.getUser1().getId())
+                .append(",")
+                .append(lobby.getUser1().getUsername())
+                .append(",")
+                .append(lobby.getUser2().getId())
+                .append(",")
+                .append(lobby.getUser2().getUsername())
+                .append(",")
+                .append(lobby.getCode())
+                .append("]");
+        return new ResponseEntity<>(response.toString(),HttpStatus.OK);
     }
 
     @DeleteMapping("/{username}")
