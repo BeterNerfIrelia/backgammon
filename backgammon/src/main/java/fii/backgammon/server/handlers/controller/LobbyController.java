@@ -35,31 +35,31 @@ public class LobbyController {
         lobbies.add(lobby);
         LobbyDAO.insertLobby(lobby);
         LobbyDAO.commit();
-        return new ResponseEntity<>("Lobby created", HttpStatus.CREATED);
+        return new ResponseEntity<>("201", HttpStatus.CREATED);
     }
 
     @PutMapping("/{username}")
     public ResponseEntity<String> joinLobby(@RequestBody User user2,@PathVariable String username) {
         Lobby lobby = lobbies.stream().filter(l -> l.getUser1().getUsername().equals(username)).findFirst().orElse(null);
         if(lobby == null) {
-            return new ResponseEntity<>("Lobby not found",HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("404",HttpStatus.NOT_FOUND);
         }
 
         lobby.setUser2(user2);
         LobbyDAO.addUser(lobby,user2);
-        return new ResponseEntity<>("User joined a lobby",HttpStatus.OK);
+        return new ResponseEntity<>("200-PUT",HttpStatus.OK);
     }
 
     @DeleteMapping("/{username}")
     public ResponseEntity<String> deleteLobby(@PathVariable("username") String username) {
         Lobby lobby = lobbies.stream().filter(l -> l.getUser1().getUsername().equals(username)).findFirst().orElse(null);
         if(lobby == null) {
-            return new ResponseEntity<>("Lobby not found",HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("404-DELETE",HttpStatus.NOT_FOUND);
         }
 
         lobbies.remove(lobby);
         LobbyDAO.deleteLobby(lobby);
         LobbyDAO.commit();
-        return new ResponseEntity<>("Lobby deleted successfully",HttpStatus.OK);
+        return new ResponseEntity<>("200-DELETE",HttpStatus.OK);
     }
 }

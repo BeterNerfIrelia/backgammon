@@ -29,6 +29,8 @@ public class RegisterCommand implements Command{
         resetUrl();
         if(response.getStatusCode().is2xxSuccessful())
             return response.getBody();
+        if(response.getStatusCode().is3xxRedirection())
+            return  response.getBody();
         return null;
     }
 

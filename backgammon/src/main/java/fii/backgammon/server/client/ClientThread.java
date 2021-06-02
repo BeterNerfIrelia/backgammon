@@ -1,6 +1,7 @@
 package fii.backgammon.server.client;
 
 import fii.backgammon.server.client.commands.Command;
+import fii.backgammon.server.client.commands.GetUserInfo;
 import fii.backgammon.server.client.commands.RegisterCommand;
 
 import java.io.BufferedReader;
@@ -24,20 +25,20 @@ public class ClientThread extends Thread{
             this.socket.setSoTimeout(SO_TIMEOUT);
             while(true) {
                 BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
                 String request = in.readLine();
+                System.out.println("request: " + request);
 
-                if(request == null)
-                    break;
+                if(request.equals("null")) {
+                    return;
+                }
 
                 PrintWriter out = new PrintWriter(socket.getOutputStream());
 
                 String response = this.interpretCommand(request);
-                return;
-                /*
+
                 out.println(response);
                 out.flush();
-                 */
+
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -58,15 +59,23 @@ public class ClientThread extends Thread{
         Command comm;
 
         switch(command.toLowerCase(Locale.ROOT)) {
-            case "register":
-            {
+            case "register": {
                 comm = new RegisterCommand(arg);
                 String response = comm.run();
-                System.out.println(response);
+                System.out.println("Response: " + response);
+                System.out.println("User: " + arg);
                 return response;
             }
 
-            default:{
+            case "get": {
+                comm = new GetUserInfo(arg);
+                String response = comm.run();
+                System.out.println("Response: " + response);
+                System.out.println("User: " + arg);
+                return response;
+            }
+
+            default: {
                 System.out.println("Unknown command");
                 return "Unknown command";
             }

@@ -31,7 +31,8 @@ public class Messages {
         try {
             PrintWriter out = new PrintWriter(socket.getOutputStream());
             out.println(response);
-            out.close();
+            out.flush();
+
         } catch (IOException e) {
             e.printStackTrace();
             System.err.println(e.getMessage());

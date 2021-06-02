@@ -37,22 +37,26 @@ public class UserController {
 
     @PostMapping(value="/username")
     public ResponseEntity<String> createUser(@RequestParam String username) {
+        User tmp = users.stream().filter(u -> u.getUsername().equals(username)).findFirst().orElse(null);
+        if(tmp != null) {
+            return new ResponseEntity<>("302",HttpStatus.FOUND);
+        }
         User user = new User(username);
         users.add(user);
         UserDAO.insertUser(user);
         UserDAO.commit();
-        return new ResponseEntity<>("User created successfully", HttpStatus.CREATED);
+        return new ResponseEntity<>("201", HttpStatus.CREATED);
     }
 
     @DeleteMapping(value="/{username}")
     public ResponseEntity<String> deleteUser(@PathVariable("username") String username) {
         User user = users.stream().filter(u -> u.getUsername().equals(username)).findFirst().orElse(null);
         if(user == null) {
-            return new ResponseEntity<>("User not found",HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("404",HttpStatus.NOT_FOUND);
         }
         users.remove(user);
         UserDAO.deleteUser(user);
         UserDAO.commit();
-        return new ResponseEntity<>("User removed",HttpStatus.OK);
+        return new ResponseEntity<>("200",HttpStatus.OK);
     }
 }
