@@ -46,4 +46,9 @@ public class Client {
     public void setUser(User user) {
         this.user = user;
     }
+
+    public Socket getSocket() {
+        return socket;
+    }
+
 }

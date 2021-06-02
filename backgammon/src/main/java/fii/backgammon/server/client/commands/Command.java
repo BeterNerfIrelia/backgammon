@@ -1,4 +1,4 @@
-package fii.backgammon.server.commands;
+package fii.backgammon.server.client.commands;
 
 public interface Command {
     String run();

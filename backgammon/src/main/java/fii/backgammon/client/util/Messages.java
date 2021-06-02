@@ -1,5 +1,9 @@
 package fii.backgammon.client.util;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.Socket;
+
 public class Messages {
 
     private String message;
@@ -21,5 +25,16 @@ public class Messages {
 
     public void print() {
         System.out.println(this.message);
+    }
+
+    public static void send(Socket socket, String response) {
+        try {
+            PrintWriter out = new PrintWriter(socket.getOutputStream());
+            out.println(response);
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println(e.getMessage());
+        }
     }
 }

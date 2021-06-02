@@ -7,7 +7,7 @@ public class Main {
 
             Client client = new Client();
             client.connect();
-            Register.run();
+            Register.run(client.getSocket());
             client.disconnect();
 
     }

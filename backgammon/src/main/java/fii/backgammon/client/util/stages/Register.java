@@ -1,10 +1,13 @@
 package fii.backgammon.client.util.stages;
 
+import fii.backgammon.client.util.Messages;
+
+import java.net.Socket;
 import java.util.Locale;
 import java.util.Scanner;
 
 public class Register {
-    public static void run() {
+    public static void run(Socket socket) {
         boolean exit = false;
         while(!exit) {
             System.out.println("Welcome to Backgammon\n");
@@ -20,6 +23,9 @@ public class Register {
 
             System.out.println("Your username is " + username);
             exit=true;
+            StringBuilder sb = new StringBuilder("register ");
+            sb.append(username);
+            Messages.send(socket,sb.toString());
         }
     }
 
