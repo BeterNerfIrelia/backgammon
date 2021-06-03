@@ -34,8 +34,9 @@ public class LobbyRoomCreator {
                         continue;
                     }
 
-
-
+                    updateCode(lobby,socket);
+                    GameRoom.run(lobby,socket);
+                    return;
                 }
 
                 case "2": {
@@ -96,11 +97,24 @@ public class LobbyRoomCreator {
         Messages.send(socket,request);
 
         String response = Register.readSocket(socket);
+        if(response.trim().equals("404")) {
+            System.out.println("Lobby does not exist");
+            return lobby;
+        }
         String[] data = response.replace("[","").replace("]","").split(",");
         if(data.length == 5) {
             User user = new User(data[2],data[3]);
             lobby.setUser2(user);
         }
         return lobby;
+
+    }
+
+    public static void updateCode(Lobby lobby, Socket socket) {
+        String request = "lobby.code " + lobby.getUser1().getUsername();
+
+        Messages.send(socket,request);
+
+        Register.readSocket(socket);
     }
 }

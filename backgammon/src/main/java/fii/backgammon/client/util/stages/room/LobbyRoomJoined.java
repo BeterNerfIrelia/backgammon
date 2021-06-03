@@ -21,16 +21,37 @@ public class LobbyRoomJoined {
             System.out.println("\t2. Back");
 
             String command = read();
+            System.out.println("COmmand : " + command);
 
             switch (command) {
                 case "1": {
                     System.out.println("You need to type your friends' username here: ");
-                    String username = read();
+                    String username = readUsername();
 
                     int status = updateLobby(lobby,socket,username);
                     if(status != 0) {
                         System.out.println("\n\nLobby does not exist at the moment of search. Plase try again later");
                         continue;
+                    }
+
+                    boolean activeGame = lobby.getCode().trim().equals("on");
+                    System.out.println("CODE: " + lobby.getCode());
+                    while(!activeGame) {
+                        System.out.println("Voi astepta 5 secunde");
+                        lobby = refreshLobby(lobby,socket);
+                        System.out.println("LOOP CODE: " + lobby.getCode());
+                        activeGame = lobby.getCode().trim().equals("on");
+                        if(activeGame) {
+                            GameRoom.run(lobby,socket);
+                            return;
+                        }
+                        try {
+                            System.out.println("ASTEPT 5 secunde");
+                            Thread.sleep(5000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                            System.err.println(e.getMessage());
+                        }
                     }
 
 
@@ -57,6 +78,14 @@ public class LobbyRoomJoined {
         return input;
     }
 
+    public static String readUsername() {
+        Scanner in = new Scanner(System.in);
+        String input = in.nextLine();
+        input = input.trim();
+
+        return input;
+    }
+
     public static int updateLobby(Lobby lobby,Socket socket, String username) {
         String request = "lobby.join ";
 
@@ -74,10 +103,35 @@ public class LobbyRoomJoined {
         Messages.send(socket,request);
 
         String response = Register.readSocket(socket);
+        if(response == null)
+            return 1;
 
         String[] data = response.replace("[","").replace("]","").split(",");
         User user1 = new User(data[0],data[1]);
         lobby.setUser1(user1);
+        lobby.setCode(data[4]);
         return 0;
+    }
+
+    public static Lobby refreshLobby(Lobby lobby, Socket socket) {
+        String request = "lobby.refresh ";
+        String pathVariable = lobby.getUser1().getId();
+
+        request += pathVariable;
+
+        Messages.send(socket,request);
+
+        String response = Register.readSocket(socket);
+        if(response.trim().equals("404")) {
+            System.out.println("Lobby does not exist");
+            return lobby;
+        }
+        String[] data = response.replace("[","").replace("]","").split(",");
+        if(data.length == 5) {
+            User user = new User(data[2],data[3]);
+            lobby.setUser2(user);
+            lobby.setCode(data[4]);
+        }
+        return lobby;
     }
 }

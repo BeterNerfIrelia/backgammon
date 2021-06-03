@@ -85,6 +85,7 @@ public class LobbyDAO {
             pstmt.execute();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+            System.err.println(throwables.getMessage());
         }
     }
 
@@ -95,6 +96,7 @@ public class LobbyDAO {
             pstmt.execute();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+            System.err.println(throwables.getMessage());
         }
     }
 
@@ -107,6 +109,20 @@ public class LobbyDAO {
             pstmt.execute();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+            System.err.println(throwables.getMessage());
+        }
+    }
+
+    public static void updateCode(Lobby lobby, String code) {
+        try {
+            lobby.setCode(code);
+            PreparedStatement pstmt = connection.prepareStatement("UPDATE LOBBY SET CODE=? WHERE USER_ID1=?");
+            pstmt.setString(1,code);
+            pstmt.setString(2,lobby.getUser1().getId());
+            pstmt.execute();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            System.err.println(throwables.getMessage());
         }
     }
 }

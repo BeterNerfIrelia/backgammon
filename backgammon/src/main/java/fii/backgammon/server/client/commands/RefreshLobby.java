@@ -12,10 +12,8 @@ public class RefreshLobby implements Command{
     private static final String URI = "http://localhost:8081/lobby/";
     private static String url = URI;
 
-    private String username;
 
     public RefreshLobby(String username) {
-        this.username = username;
         url += username;
 
     }
@@ -45,7 +43,7 @@ public class RefreshLobby implements Command{
         return res.toString();
         }
 
-        return null;
+        return "404";
     }
 
     @Override

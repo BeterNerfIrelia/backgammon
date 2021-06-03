@@ -94,6 +94,7 @@ public class ClientThread extends Thread{
             }
 
             case "lobby.join": {
+                System.out.println("LOBBY.JOIN: " + arg);
                 String[] data = arg.replace("[","").replace("]","").split(",");
                 String username = data[0];
                 User user2 = new User(data[1],data[2]);
@@ -101,6 +102,15 @@ public class ClientThread extends Thread{
                 String response = comm.run();
                 System.out.println("Response: " + response);
                 System.out.println("Arg: " + arg);
+                return response;
+            }
+
+            case "lobby.code": {
+                System.out.println("LOBBY.CODE");
+                comm = new UpdateCode(arg);
+                String response = comm.run();
+                System.out.println("Response: " + response);
+                System.out.println("Arg: "+ arg);
                 return response;
             }
 

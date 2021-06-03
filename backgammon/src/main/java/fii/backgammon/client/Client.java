@@ -28,7 +28,7 @@ public class Client {
     }
 
     public void disconnect() {
-        System.out.println("disconnect");
+        System.out.println("Disconnected");
         try {
             socket.close();
         } catch (IOException e) {

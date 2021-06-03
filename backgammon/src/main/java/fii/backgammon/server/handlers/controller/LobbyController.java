@@ -74,6 +74,18 @@ public class LobbyController {
         return new ResponseEntity<>(response.toString(),HttpStatus.OK);
     }
 
+    @PutMapping("/{username}/code")
+    public ResponseEntity<String> updateCode(@PathVariable("username") String username,@RequestParam String code) {
+        Lobby lobby = lobbies.stream().filter(l -> l.getUser1().getUsername().equals(username)).findFirst().orElse(null);
+        if(lobby == null) {
+            return new ResponseEntity<>("404",HttpStatus.NOT_FOUND);
+        }
+
+        lobby.setCode(code);
+        LobbyDAO.updateCode(lobby,code);
+        return new ResponseEntity<>("200",HttpStatus.OK);
+    }
+
     @DeleteMapping("/{username}")
     public ResponseEntity<String> deleteLobby(@PathVariable("username") String username) {
         Lobby lobby = lobbies.stream().filter(l -> l.getUser1().getUsername().equals(username)).findFirst().orElse(null);

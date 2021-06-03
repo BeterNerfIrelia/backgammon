@@ -1,5 +1,7 @@
 package fii.backgammon.server.client.game.util;
 
+import java.util.Objects;
+
 public class Pair<K,V> {
 
     private K first;
