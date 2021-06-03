@@ -5,6 +5,7 @@ import fii.backgammon.client.util.entity.Lobby;
 import fii.backgammon.client.util.entity.User;
 import fii.backgammon.client.util.stages.LobbyMenu;
 import fii.backgammon.client.util.stages.Register;
+import fii.backgammon.client.util.stages.room.game.GameRoom;
 
 import java.net.Socket;
 import java.util.Scanner;
@@ -35,7 +36,7 @@ public class LobbyRoomCreator {
                     }
 
                     updateCode(lobby,socket);
-                    GameRoom.run(lobby,socket);
+                    GameRoom.run(lobby,socket,0);
                     return;
                 }
 

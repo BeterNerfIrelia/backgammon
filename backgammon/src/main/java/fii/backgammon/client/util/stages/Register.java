@@ -31,7 +31,6 @@ public class Register {
             Messages.send(socket,sb.toString());
 
             String response = Register.readSocket(socket);
-            System.out.println("RESPONSE: " + response);
             if(response.equals("302")) {
                 System.out.println("\n\nUsername already exists. Please enter another username.\n");
                 continue;

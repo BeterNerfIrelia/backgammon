@@ -75,7 +75,6 @@ public class LobbyMenu {
         String id = tokens[0];
         String uname = tokens[1];
 
-        System.out.println("id: " + id + "\nuname: " + uname);
         return new User(id,uname);
     }
 }

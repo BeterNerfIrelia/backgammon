@@ -4,6 +4,7 @@ import fii.backgammon.client.util.Messages;
 import fii.backgammon.client.util.entity.Lobby;
 import fii.backgammon.client.util.entity.User;
 import fii.backgammon.client.util.stages.Register;
+import fii.backgammon.client.util.stages.room.game.GameRoom;
 
 import java.net.Socket;
 import java.util.Scanner;
@@ -11,7 +12,6 @@ import java.util.Scanner;
 public class LobbyRoomJoined {
 
     public static void run(Socket socket, User user) {
-        System.out.println("Joiner");
         Lobby lobby = new Lobby();
         lobby.setUser2(user);
         while(true) {
@@ -21,7 +21,6 @@ public class LobbyRoomJoined {
             System.out.println("\t2. Back");
 
             String command = read();
-            System.out.println("COmmand : " + command);
 
             switch (command) {
                 case "1": {
@@ -35,18 +34,15 @@ public class LobbyRoomJoined {
                     }
 
                     boolean activeGame = lobby.getCode().trim().equals("on");
-                    System.out.println("CODE: " + lobby.getCode());
                     while(!activeGame) {
-                        System.out.println("Voi astepta 5 secunde");
-                        lobby = refreshLobby(lobby,socket);
-                        System.out.println("LOOP CODE: " + lobby.getCode());
+                        Lobby lobby2 = refreshLobby(lobby,socket);
+                        lobby = lobby2;
                         activeGame = lobby.getCode().trim().equals("on");
                         if(activeGame) {
-                            GameRoom.run(lobby,socket);
+                            GameRoom.run(lobby,socket,1);
                             return;
                         }
                         try {
-                            System.out.println("ASTEPT 5 secunde");
                             Thread.sleep(5000);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
