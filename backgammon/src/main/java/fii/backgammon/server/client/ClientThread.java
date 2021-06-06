@@ -1,6 +1,7 @@
 package fii.backgammon.server.client;
 
 import fii.backgammon.server.client.commands.*;
+import fii.backgammon.server.client.game.util.BoardHandler;
 import fii.backgammon.server.handlers.entity.User;
 
 import java.io.BufferedReader;
@@ -134,7 +135,8 @@ public class ClientThread extends Thread{
             case "game.update": {
                 System.out.println("GAME.UPDATE ARG: " + arg);
                 // TODO game logic
-                comm = new UpdateGame(arg);
+                String newBoard = new BoardHandler(arg).getGame();
+                comm = new UpdateGame(newBoard);
                 String response = comm.run();
                 System.out.println("GAME.UPDATE RESPONSE: " + response);
                 return response;

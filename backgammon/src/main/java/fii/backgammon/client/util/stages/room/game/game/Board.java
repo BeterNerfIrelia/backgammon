@@ -15,7 +15,7 @@ public class Board {
 
     private Integer whites;
     private Integer blacks;
-    //private Colour colour;
+    private Colour colour;
     private Random random = new Random();
 
     private final String whiteCircle = "0";
@@ -40,6 +40,7 @@ public class Board {
         putZero();
         initPieces();
         initOffPieces();
+        this.colour = colour;
 
         if(colour == Colour.BLACK)
             this.flip();
@@ -56,6 +57,10 @@ public class Board {
 
     public void setBoard(List<Integer> board) {
         this.board = board;
+    }
+
+    public Colour getColour() {
+        return colour;
     }
 
     public void setBoard(String board) {
@@ -236,5 +241,116 @@ public class Board {
         }
 
         return sb.toString();
+    }
+
+    public boolean hasOffPieces() {
+        if(this.colour == Colour.WHITE)
+            return whites > 0;
+        return blacks > 0;
+    }
+
+    public boolean canMove(int column, int dist) {
+        if(column < 1 || column > 24) {
+            return false;
+        }
+
+        if(board.get(column) == 0) {
+            return false;
+        }
+
+        if(this.colour == Colour.WHITE) {
+            if(board.get(column) < 0)
+                return false;
+            if(column + dist > 24)
+                return false;
+            if(board.get(column+dist) < -1)
+                return false;
+            return true;
+        }
+        else {
+            if(board.get(column) > 0)
+                return false;
+            if(column + dist > 24)
+                return false;
+            if(board.get(column+dist) > 1)
+                return false;
+            return true;
+        }
+    }
+
+    public boolean hasPiecesOutsideBase() {
+        if(hasOffPieces())
+            return true;
+        for(int i=1;i<=18;++i)
+            if(this.colour == Colour.WHITE) {
+                if(board.get(i) > 0)
+                    return true;
+            }
+        else {
+                if(board.get(i) < 0)
+                    return true;
+            }
+        return false;
+    }
+
+    public boolean canPutPiece(int column) {
+        if(this.colour == Colour.WHITE) {
+            if(column < 1 || column >6)
+                return false;
+            if(board.get(column) < -1)
+                return false;
+            return true;
+        }
+        else {
+            if(column < 1 || column >6)
+                return false;
+            if(board.get(column) > 1)
+                return false;
+            return true;
+
+        }
+    }
+
+    public boolean canRemove() {
+        if(this.colour == Colour.WHITE) {
+            for(int i=1;i<=6;++i)
+                if(board.get(i) >= -1)
+                    return true;
+        }
+        else {
+            for(int i=1;i<=6;++i)
+                if(board.get(i) <= 1)
+                    return true;
+        }
+        return false;
+    }
+
+    public boolean canRemove(List<Integer> dice) {
+        if(!canRemove())
+            return false;
+        if(dice.size() == 4)
+            return canRemovePiece(dice.get(0));
+        return canRemovePiece(dice.get(0)) || canRemovePiece(dice.get(1));
+    }
+
+    public boolean canRemovePiece(int column) {
+        if(this.colour == Colour.WHITE) {
+            if(column < 19 || column > 24)
+                return false;
+            if(board.get(column) < 1)
+                return false;
+            return true;
+        }
+        else {
+            if(column < 19 || column > 24)
+                return false;
+            if(board.get(column) > -1)
+                return false;
+            return true;
+        }
+    }
+
+    public List<Integer> getDice() {
+        return res;
     }
 }
