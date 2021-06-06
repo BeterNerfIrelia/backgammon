@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.net.SocketException;
 import java.util.Locale;
 
 public class ClientThread extends Thread{
@@ -111,6 +110,33 @@ public class ClientThread extends Thread{
                 String response = comm.run();
                 System.out.println("Response: " + response);
                 System.out.println("Arg: "+ arg);
+                return response;
+            }
+
+            case "game.create": {
+                System.out.println("GAME.CREATE ARG: " + arg);
+                String[] data = arg.split("\\+");
+                comm = new CreateGame(data[0],data[1],data[2],data[3]);
+                String response = comm.run();
+                System.out.println("RESPONSE: " + response);
+                return response;
+
+            }
+
+            case "game.get": {
+                System.out.println("GAME.GET ARG: " + arg);
+                comm = new GetGame(arg);
+                String response = comm.run();
+                System.out.println("RESPONSE: " + response);
+                return response;
+            }
+
+            case "game.update": {
+                System.out.println("GAME.UPDATE ARG: " + arg);
+                // TODO game logic
+                comm = new UpdateGame(arg);
+                String response = comm.run();
+                System.out.println("GAME.UPDATE RESPONSE: " + response);
                 return response;
             }
 

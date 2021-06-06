@@ -34,6 +34,7 @@ public class LobbyRoomJoined {
                     }
 
                     boolean activeGame = lobby.getCode().trim().equals("on");
+                    System.out.println("Waiting for the leader to start the game...");
                     while(!activeGame) {
                         Lobby lobby2 = refreshLobby(lobby,socket);
                         lobby = lobby2;
