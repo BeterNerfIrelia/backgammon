@@ -69,9 +69,18 @@ public class Board {
             this.board.set(i,Integer.parseInt(data[i]));
         this.whites = Integer.parseInt(data[25]);
         this.blacks = Integer.parseInt(data[26]);
+
     }
 
-    private void flip() {
+    public List<Integer> getRes() {
+        return res;
+    }
+
+    public void setRes(List<Integer> res) {
+        this.res = res;
+    }
+
+    public void flip() {
         for(int i=1; i<=12;++i) {
             int tmp = board.get(i);
             board.set(i, board.get(24-i+1));

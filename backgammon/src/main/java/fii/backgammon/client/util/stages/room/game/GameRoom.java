@@ -1,6 +1,7 @@
 package fii.backgammon.client.util.stages.room.game;
 
 import java.net.Socket;
+import java.util.List;
 import java.util.Scanner;
 
 import fii.backgammon.client.util.Messages;
@@ -37,6 +38,7 @@ public class GameRoom {
         }
 
         String piece = board.getWhiteCircle();
+        int turn = 3 - (colour + 1);
 
         /*
         LobbyMenu.newlines();
@@ -46,14 +48,48 @@ public class GameRoom {
         Boolean invalid = false;
         int response = 0;
         Pair<Integer,Integer> responsePair = new Pair<>();
-        responsePair.setPair(0,0);
+        responsePair.setPair(-1,0);
         while (true) {
             /*
             System.out.println("You have these pieces: " + piece);
             board.drawBoard();
             */
 
+            board.setBoard(game.getBoard());
+
+            if(game.getState().contains("white0")) {
+                game.setState("black");
+                turn = 3 - turn;
+                Game game2 = updateGame(game, socket);
+                game = game;
+                board.setBoard(game.getBoard());
+                board.flip();
+                responsePair.setPair(0,0);
+
+                continue;
+            } else if(game.getState().contains("black0")) {
+                game.setState("white");
+                turn = 3 - turn;
+                Game game2 = updateGame(game, socket);
+                game = game;
+                board.setBoard(game.getBoard());
+                board.flip();
+                responsePair.setPair(0,0);
+            }
+
             defaultText(board,piece, invalid);
+
+            if((colour == 0 && turn == 1) || (colour == 1 && turn == 2)) {
+                System.out.println("You have to wait for your opponent's turn");
+                try {
+                    Thread.sleep(3500);
+                    game = refreshGame(lobby.getUser1().getId(),socket);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    System.err.println(e.getMessage());
+                }
+            }
+
 
             String command = read();
             String[] tokens = command.split(" ");
@@ -70,6 +106,8 @@ public class GameRoom {
             }
             if(responsePair.getSecond() == -1) {
                 invalid = true;
+                defaultText(board,piece, invalid);
+                invalid = false;
                 continue;
             }
             if(responsePair.getFirst() == 1 && tokens[0].equals("roll")) {
@@ -119,18 +157,20 @@ public class GameRoom {
             if(responsePair.getSecond() == 5)
                 return;
 
-            response = executeCommand(tokens,board, game);
+            response = executeCommand(tokens,board, game, socket);
             if(response == 1)
                 responsePair.setFirst(response);
             else
                 responsePair.setSecond(response);
             if(board.getDice().size() == 0)
                 responsePair.setFirst(0);
+            if(response == 5)
+                return;
         }
 
     }
 
-    public static int executeCommand(String[] tokens, Board board, Game game) {
+    public static int executeCommand(String[] tokens, Board board, Game game, Socket socket) {
         switch(tokens[0]) {
             case "roll": {
                 var rolls = board.roll();
@@ -146,6 +186,9 @@ public class GameRoom {
                     sb.append(",").append(rolls.get(i));
                 sb.append("]");
                 System.out.println("You rolled: " + sb.toString());
+                game.setDice(sb.toString());
+                Game game2 = updateGame(game, socket);
+                game = game2;
                 return 1;
             }
 
@@ -156,7 +199,24 @@ public class GameRoom {
                         var state = game.getState();
                         state += "move";
                         game.setState(state);
-                        board.getDice().remove(Integer.parseInt(tokens[2]));
+
+                        List<Integer> dice = board.getDice();
+                        if(dice.size() == 4) {
+                            if(Integer.parseInt(tokens[2]) == dice.get(0))
+                                dice.remove(0);
+                        }
+                        else {
+                            int val = Integer.parseInt(tokens[2]);
+                            if(val == dice.get(0))
+                                dice.remove(0);
+                            else
+                                dice.remove(1);
+                        }
+
+                        board.setRes(dice);
+
+                        Game game2 = updateGame(game, socket);
+                        game = game2;
                         return 2;
                     }
                     else {
@@ -176,7 +236,24 @@ public class GameRoom {
                             var state = game.getState();
                             state += "put";
                             game.setState(state);
-                            board.getDice().remove(Integer.parseInt(tokens[1]));
+
+                            List<Integer> dice = board.getDice();
+                            if(dice.size() == 4) {
+                                if(Integer.parseInt(tokens[2]) == dice.get(0))
+                                    dice.remove(0);
+                            }
+                            else {
+                                int val = Integer.parseInt(tokens[2]);
+                                if(val == dice.get(0))
+                                    dice.remove(0);
+                                else
+                                    dice.remove(1);
+                            }
+
+                            board.setRes(dice);
+
+                            Game game2 = updateGame(game, socket);
+                            game = game2;
                             return 3;
                         }
                 }
@@ -191,7 +268,26 @@ public class GameRoom {
                             var state = game.getState();
                             state += "remove:";
                             game.setState(state);
-                            board.getDice().remove(Integer.parseInt(tokens[1]));
+
+                            List<Integer> dice = board.getDice();
+                            if(dice.size() == 4) {
+                                if(Integer.parseInt(tokens[2]) == dice.get(0))
+                                    dice.remove(0);
+                            }
+                            else {
+                                int val = Integer.parseInt(tokens[2]);
+                                if(val == dice.get(0))
+                                    dice.remove(0);
+                                else
+                                    dice.remove(1);
+                            }
+
+                            board.setRes(dice);
+
+                            Game game2 = updateGame(game, socket);
+                            game = game2;
+
+                            return 4;
                         }
                 }
                 return -4;
@@ -234,7 +330,7 @@ public class GameRoom {
         System.out.println("RESPONSE: " + response);
 
         String[] data = response.split("\\+");
-        Game tmp = new Game(userId,data[0],data[1],data[2]);
+        Game tmp = new Game(data[0],data[1],data[2],data[3]);
 
         return tmp;
     }
@@ -248,7 +344,7 @@ public class GameRoom {
         System.out.println("RESPONSE: " + response);
 
         String[] data = response.split("\\+");
-        Game tmp = new Game(userId,data[0],data[1],data[2]);
+        Game tmp = new Game(data[0],data[1],data[2],data[3]);
 
         return tmp;
 
@@ -287,8 +383,10 @@ public class GameRoom {
 
         if(invalid) {
             System.out.println("Invalid command. Please input a valid command");
-            invalid = !invalid;
+
         }
+
+
     }
 
 }

@@ -27,6 +27,7 @@ public class BoardHandler {
         StringBuilder sb = new StringBuilder(tokens[0]).append("+[0");
         for(int i=1;i<=24;++i)
             sb.append(",").append(board.get(i));
+        sb.append(",").append(this.whites).append(",").append(this.blacks);
         sb.append("]+[");
         sb.append(dice.getFirst()).append(",").append(dice.getSecond()).append("]+");
         sb.append(state);
@@ -43,6 +44,8 @@ public class BoardHandler {
             executePut();
         if(arg.endsWith("remove"))
             executeRemove();
+
+        setArg();
         return arg;
     }
 
@@ -100,10 +103,10 @@ public class BoardHandler {
         String[] data = board.replace("[","").replace("]","").split(",");
         for(int i=0;i<=24;++i)
             tmp.add(Integer.parseInt(data[i]));
-        this.board = tmp;
 
         this.whites = Integer.parseInt(data[25]);
         this.blacks = Integer.parseInt(data[26]);
+        this.board = tmp;
 
         return tmp;
     }
@@ -111,7 +114,7 @@ public class BoardHandler {
     private void executeMove() {
         int piece = board.get(dice.getFirst());
         int move = dice.getSecond();
-        if(piece > 0) {
+        if(board.get(piece) > 0) {
             board.set(piece,board.get(piece) - 1);
             board.set(piece + move,board.get(piece + move) + 1);
         }

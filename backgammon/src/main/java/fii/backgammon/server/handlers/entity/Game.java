@@ -25,7 +25,7 @@ public class Game {
     }
 
     public String getBoard() {
-        return board;
+        return this.board;
     }
 
     public void setBoard(String board) {
